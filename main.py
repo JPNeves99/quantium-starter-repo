@@ -1,13 +1,29 @@
 
 import csv
+import pandas as pd
+from dash import Dash, html, dcc
+import plotly.express as px
 
-def main():
-    print("Generated a new csv file called soul_foods_sales")
-    salesData()
 
+
+def lineChart():
+
+    df = pd.read_csv('soul_foods_sales.csv')
+
+    fig = px.line(df, x="date", y="sales")
+
+    app.layout = html.Div(children=[
+    html.H1(children='Pink morcel sales'),
+
+    dcc.Graph(
+        id='pinkMorcel-graph',
+        figure=fig
+    )
+])
 
 
 def salesData():
+
     file_paths = [
     "data/daily_sales_data_0.csv",
     "data/daily_sales_data_1.csv",
@@ -38,7 +54,13 @@ def salesData():
         writer.writeheader()
         writer.writerows(processed_rows)
 
+app = Dash(__name__)
+
+
+print("Generated a new csv file called soul_foods_sales")
+salesData() #can be commented once generated but still on so its constantly updated
+lineChart()
 
 
 if __name__== "__main__":
-    main()
+    app.run(debug=True)
