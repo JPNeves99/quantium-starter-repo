@@ -1,26 +1,76 @@
 
 import csv
 import pandas as pd
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc,Input, Output, callback
 import plotly.express as px
 
 
 
 def lineChart():
 
-    df = pd.read_csv('soul_foods_sales.csv')
+    app.layout = html.Div(
+    children=[
+        # Header
+        html.H1(
+            children='Pink Morcel Sales',
+            style={
+                'textAlign': 'center',
+                'color': '#ff69b4',
+                'fontFamily': 'Arial, sans-serif',
+                'fontWeight': 'bold',
+                'fontSize': '36px',
+                'marginBottom': '20px',
+            }
+        ),
+
+        # Radio Items for selecting the region
+        html.Div(
+            dcc.RadioItems(
+                ['general', 'north', 'south', 'east', 'west'],
+                'general',
+                id='chart-type',
+                inline=True,
+                style={
+                    'textAlign': 'center',
+                    'marginBottom': '20px',
+                    'fontFamily': 'Arial, sans-serif',
+                    'fontSize': '18px',
+                    'color': '#555',
+                }
+            )
+        ),
+
+        # Graph
+        dcc.Graph(
+            id='pinkMorcel-graph',
+            style={
+                'padding': '20px',
+                'backgroundColor': '#f9f9f9',
+                'borderRadius': '10px',
+                'boxShadow': '0px 0px 10px rgba(0, 0, 0, 0.1)',
+            }
+        )
+    ],
+    style={
+        'backgroundColor': '#f0f0f0',
+        'padding': '40px',
+        'fontFamily': 'Arial, sans-serif',
+    }
+)
+
+@callback(
+    Output('pinkMorcel-graph', 'figure'),
+    Input('chart-type', 'value'),
+)
+def update_graph(direction):
+    df= pd.read_csv('soul_foods_sales.csv')
+    df = df.sort_values(by="date")
+
+    if direction != 'general':
+        df= df[df['region']== direction]
 
     fig = px.line(df, x="date", y="sales")
-
-    app.layout = html.Div(children=[
-    html.H1(children='Pink morcel sales'),
-
-    dcc.Graph(
-        id='pinkMorcel-graph',
-        figure=fig
-    )
-])
-
+    return fig
 
 def salesData():
 
