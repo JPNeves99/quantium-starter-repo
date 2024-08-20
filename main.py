@@ -13,6 +13,7 @@ def lineChart():
         # Header
         html.H1(
             children='Pink Morcel Sales',
+            id="header",
             style={
                 'textAlign': 'center',
                 'color': '#ff69b4',
